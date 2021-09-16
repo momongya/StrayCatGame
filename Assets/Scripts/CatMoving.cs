@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CatMoving : MonoBehaviour
 {
+
+    int catSpeed = 2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +16,7 @@ public class CatMoving : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //プレイヤーを動かす
+        transform.position += transform.right * catSpeed * Time.deltaTime;
     }
 }

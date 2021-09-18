@@ -7,17 +7,14 @@ using UnityEngine.AI;
 public class CatMoving : MonoBehaviour
 {
 
-    int catSpeed = 2;
+    float catSpeed;
     public GameObject goal;
-    TimerController time = new TimerController();
-
-    //public Transform goal;
-    //NavMeshAgent nav;
+    public GameObject time;
 
     // Start is called before the first frame update
     void Start()
     {
-        //nav = GetComponent<NavMeshAgent>();
+       
     }
 
     // Update is called once per frame
@@ -25,9 +22,12 @@ public class CatMoving : MonoBehaviour
     {
         //プレイヤーを動かす
         transform.position += transform.right * catSpeed * Time.deltaTime;
-        //nav.SetDestination(goal.transform.position);
 
-        if (time.timer <= 0)
+        //猫の移動する速さはランダムに設定する
+        catSpeed = Random.Range(1.5f, 3.0f);
+
+
+        if (time.GetComponent<TimerController>().TimeManager() <= 0)
         {
             SceneManager.LoadScene("GameOver");
         }
@@ -36,5 +36,11 @@ public class CatMoving : MonoBehaviour
         {
             SceneManager.LoadScene("Goal");
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //猫の角度は接する床面に依存する(z軸だけ)
+        transform.Rotate(new Vector3(0, 0, collision.gameObject.transform.rotation.z));
     }
 }

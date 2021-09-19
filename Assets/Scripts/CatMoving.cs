@@ -11,6 +11,9 @@ public class CatMoving : MonoBehaviour
     public GameObject goal;
     public GameObject time;
 
+    public GameObject[] catFood;
+    public GameObject foodCreator;
+
     //変数を作る
     Rigidbody2D rb;
 
@@ -75,5 +78,25 @@ public class CatMoving : MonoBehaviour
             //Rigidbody2Dに重力を加える
             rb.AddForce(myGravity);
         }
+    }
+
+    // 猫の餌が近くにあるかどうか判別し、猫の餌が近くにあっても籠がかかっていれば近寄らない
+    //FoodCheck <= true 猫は近寄る FoodCheck <= false 猫は近寄らない
+    bool FoodChecker()
+    {
+        bool foodCheck = false;
+        for (int i = 0; i < catFood.Length; i++)
+        {
+            //猫缶に籠がかかっていなければ
+            if (foodCreator.GetComponent<ItemController>().FoodStatus(i) == false)
+            {
+                // 猫缶が近くにあれば
+                if (transform.position.y == catFood[i].gameObject.transform.position.y && (catFood[i].gameObject.transform.position.x - transform.position.x) < 10)
+            　　 {
+
+                }
+            }
+        }
+        return foodCheck;
     }
 }

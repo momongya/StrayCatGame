@@ -8,11 +8,22 @@ public class ItemController : MonoBehaviour
     public GameObject[] catFood;
 
     bool[] foodStatus;
+    int i;
+
+    static public ItemController itemController;
+
+    void Awake()
+    {
+        if (itemController == null)
+        {
+            itemController = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < catFood.Length; i++)
+        for (i = 0; i < catFood.Length; i++)
         {
             //falseのとき籠なし
             foodStatus[i] = false;
@@ -31,7 +42,7 @@ public class ItemController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             //猫缶から場所がそう離れていなければ
-            for (int i = 0; i < catFood.Length; i++)
+            for (i = 0; i < catFood.Length; i++)
             {
                 if ((catFood[i].gameObject.transform.position.x - mousePos.x) < 10)
                 {
@@ -43,8 +54,8 @@ public class ItemController : MonoBehaviour
         }
     }
 
-    // 猫缶に籠がかかっているか否かを返す falseのとき籠なし
-    public bool FoodStatus(int i)
+    //プロパティー
+    public bool GetFoodStatus(int i)
     {
         return foodStatus[i];
     }

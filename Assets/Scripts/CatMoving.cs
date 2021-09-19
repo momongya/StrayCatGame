@@ -13,6 +13,7 @@ public class CatMoving : MonoBehaviour
 
     public GameObject[] catFood;
     public GameObject foodCreator;
+    public GameObject came;
 
     //変数を作る
     Rigidbody2D rb;
@@ -29,11 +30,20 @@ public class CatMoving : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //プレイヤーを動かす
-        transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
 
         //猫の移動する速さはランダムに設定する
         catSpeed = Random.Range(1.5f, 3.0f);
+
+        if (FoodChecker() == -1)
+        {
+            //プレイヤーを動かす
+            transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
+        } else
+        {
+            ////プレイヤーを動かす
+            //transform.LookAt(catFood[FoodChecker()].transform);
+            //transform.position += transform.right * catSpeed * Time.deltaTime;
+        }
 
         //自分で作った重力
         Vector2 myGravity = new Vector2(0, -9.81f);
@@ -51,14 +61,16 @@ public class CatMoving : MonoBehaviour
         {
             SceneManager.LoadScene("Goal");
         }
+
+        came.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        //もし丸太の足場にあたったなら、丸太の角度に移動する
+        //もし丸太の足場にあたったら
         if (collision.gameObject.CompareTag("wood"))
         {
-            rb.velocity = new Vector3(0, 3, 0);
+            //rb.velocity = new Vector3(0, 3, 0);
         }
     }
 
@@ -81,22 +93,23 @@ public class CatMoving : MonoBehaviour
     }
 
     // 猫の餌が近くにあるかどうか判別し、猫の餌が近くにあっても籠がかかっていれば近寄らない
-    //FoodCheck <= true 猫は近寄る FoodCheck <= false 猫は近寄らない
-    bool FoodChecker()
+    //FoodCheck <=　正の数 猫は近寄る FoodCheck <= -1 猫は近寄らない
+    int FoodChecker()
     {
-        bool foodCheck = false;
+        int j = -1;
         for (int i = 0; i < catFood.Length; i++)
         {
-            //猫缶に籠がかかっていなければ
-            if (foodCreator.GetComponent<ItemController>().FoodStatus(i) == false)
-            {
+            //bool status = ItemController.itemController.GetFoodStatus(i);
+            ////猫缶に籠がかかっていなければ
+            //if (status == false)
+            //{
                 // 猫缶が近くにあれば
                 if (transform.position.y == catFood[i].gameObject.transform.position.y && (catFood[i].gameObject.transform.position.x - transform.position.x) < 10)
             　　 {
-
+                    j = i;
                 }
-            }
+            //}
         }
-        return foodCheck;
+        return j;
     }
 }

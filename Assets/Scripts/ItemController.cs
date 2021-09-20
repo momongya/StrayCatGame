@@ -10,19 +10,10 @@ public class ItemController : MonoBehaviour
     bool[] foodStatus;
     int i;
 
-    static public ItemController itemController;
-
-    void Awake()
-    {
-        if (itemController == null)
-        {
-            itemController = this;
-        }
-    }
-
     // Start is called before the first frame update
     void Start()
     {
+        foodStatus = new bool[catFood.Length];
         for (i = 0; i < catFood.Length; i++)
         {
             //falseのとき籠なし

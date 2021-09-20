@@ -20,6 +20,13 @@ public class CatMoving : MonoBehaviour
 
     Vector3 angles;
 
+    private ItemController itemController;
+
+    private void Awake()
+    {
+        itemController = foodCreator.gameObject.GetComponent<ItemController>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,15 +41,17 @@ public class CatMoving : MonoBehaviour
         //猫の移動する速さはランダムに設定する
         catSpeed = Random.Range(1.5f, 3.0f);
 
-        if (FoodChecker() == -1)
+        int food = FoodChecker();
+        if (food == -1)
         {
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
-        } else
+        }
+        else
         {
-            ////プレイヤーを動かす
-            //transform.LookAt(catFood[FoodChecker()].transform);
-            //transform.position += transform.right * catSpeed * Time.deltaTime;
+            //プレイヤーを動かす
+            transform.LookAt(catFood[FoodChecker()].transform);
+            transform.position += transform.right * catSpeed * Time.deltaTime;
         }
 
         //自分で作った重力
@@ -99,16 +108,16 @@ public class CatMoving : MonoBehaviour
         int j = -1;
         for (int i = 0; i < catFood.Length; i++)
         {
-            //bool status = ItemController.itemController.GetFoodStatus(i);
-            ////猫缶に籠がかかっていなければ
-            //if (status == false)
-            //{
+            bool status = itemController.GetFoodStatus(i);
+            //猫缶に籠がかかっていなければ
+            if (status == false)
+            {
                 // 猫缶が近くにあれば
                 if (transform.position.y == catFood[i].gameObject.transform.position.y && (catFood[i].gameObject.transform.position.x - transform.position.x) < 10)
             　　 {
                     j = i;
                 }
-            //}
+            }
         }
         return j;
     }

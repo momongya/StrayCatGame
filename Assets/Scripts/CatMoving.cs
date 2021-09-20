@@ -49,6 +49,7 @@ public class CatMoving : MonoBehaviour
         }
         else
         {
+            Debug.Log("あい");
             //プレイヤーを動かす
             transform.LookAt(catFood[FoodChecker()].transform);
             transform.position += transform.right * catSpeed * Time.deltaTime;
@@ -113,7 +114,7 @@ public class CatMoving : MonoBehaviour
             if (status == false)
             {
                 // 猫缶が近くにあれば
-                if (transform.position.y == catFood[i].gameObject.transform.position.y && (catFood[i].gameObject.transform.position.x - transform.position.x) < 10)
+                if (transform.position.y <= -3 && (catFood[i].gameObject.transform.position.x - transform.position.x) < 5)
             　　 {
                     j = i;
                 }

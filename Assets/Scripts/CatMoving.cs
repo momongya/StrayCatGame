@@ -32,6 +32,8 @@ public class CatMoving : MonoBehaviour
     {
        // Rigidbody2Dを取得
         rb = GetComponent<Rigidbody2D>();
+
+        //猫の回転角を取得
     }
 
     // Update is called once per frame
@@ -49,15 +51,8 @@ public class CatMoving : MonoBehaviour
         }
         else if (food >= 0)
         {
-            //プレイヤーを動かす
-            Vector3 diff = (catFood[food].gameObject.transform.position - this.transform.position);
-
-            this.transform.rotation = Quaternion.FromToRotation(Vector3.up, diff);
-
-
-            // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
+            // 一定の秒数餌の元にいたら猫缶は消え、前を向く
             StartCoroutine(DestroyCatFood(food));
-            transform.LookAt(goal.transform);
         }
 
         //自分で作った重力
@@ -131,9 +126,11 @@ public class CatMoving : MonoBehaviour
     // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
     IEnumerator DestroyCatFood(int i)
     {
+        angles = new Vector3(0, 180, 0);
+
         if (1.4 <= transform.position.x - catFood[i].gameObject.transform.position.x)
         {
-            transform.position += transform.right * catSpeed * Time.deltaTime;
+            transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
         }
 
         // 3秒停止
@@ -144,6 +141,9 @@ public class CatMoving : MonoBehaviour
 
         // 存在の抹消
         itemController.SetFoodStatus(i, false);
+
+        //前を向く
+        angles = new Vector3(0, 0, 0);
     }
 
     //猫が1秒間にどれだけの距離(x軸方向)進んでいるのか調べる(基本的にはupdate関数内で使う想定)

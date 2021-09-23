@@ -47,12 +47,17 @@ public class CatMoving : MonoBehaviour
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
         }
-        else
+        else if (food >= 0)
         {
-            Debug.Log("あい");
             //プレイヤーを動かす
-            transform.LookAt(catFood[FoodChecker()].transform);
-            transform.position += transform.right * catSpeed * Time.deltaTime;
+            Vector3 diff = (catFood[food].gameObject.transform.position - this.transform.position);
+
+            this.transform.rotation = Quaternion.FromToRotation(Vector3.up, diff);
+
+
+            // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
+            StartCoroutine(DestroyCatFood(food));
+            transform.LookAt(goal.transform);
         }
 
         //自分で作った重力
@@ -95,7 +100,7 @@ public class CatMoving : MonoBehaviour
             angles = new Vector3(0, 0, collision.gameObject.transform.localEulerAngles.z);
 
             //自分で作った重力
-            Vector2 myGravity = new Vector2(0, -9.81f);
+            Vector2 myGravity = new Vector2(0, 9.81f);
 
             //Rigidbody2Dに重力を加える
             rb.AddForce(myGravity);
@@ -110,7 +115,7 @@ public class CatMoving : MonoBehaviour
         for (int i = 0; i < catFood.Length; i++)
         {
             bool status = itemController.GetFoodStatus(i);
-            //猫缶に籠がかかっていなければ
+            //猫缶に籠がかかっていなくて存在していれば
             if (status == false)
             {
                 // 猫缶が近くにあれば
@@ -121,5 +126,47 @@ public class CatMoving : MonoBehaviour
             }
         }
         return j;
+    }
+
+    // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
+    IEnumerator DestroyCatFood(int i)
+    {
+        if (1.4 <= transform.position.x - catFood[i].gameObject.transform.position.x)
+        {
+            transform.position += transform.right * catSpeed * Time.deltaTime;
+        }
+
+        // 3秒停止
+        yield return new WaitForSeconds(3);
+
+        // 猫缶消去
+        itemController.DeleteCatFood(i);
+
+        // 存在の抹消
+        itemController.SetFoodStatus(i, false);
+    }
+
+    //猫が1秒間にどれだけの距離(x軸方向)進んでいるのか調べる(基本的にはupdate関数内で使う想定)
+    //猫がほとんどその場で止まっているよう(つまり壁や障害物にぶつかっている時)
+    float CheckMoving()
+    {
+        float time = 0;
+        float maxX = -1;
+        float minX = 0;
+
+        time += Time.deltaTime;
+        while(time >= 1.0f)
+        {
+            if (maxX > transform.position.x)
+            {
+                maxX = transform.position.x;
+            }
+            if (minX < transform.position.x)
+            {
+                minX = transform.position.x;
+            }
+        }
+
+        return maxX - minX;
     }
 }

@@ -45,9 +45,22 @@ public class ItemController : MonoBehaviour
         }
     }
 
-    //プロパティー
+    public void SetFoodStatus(int i, bool a)
+    {
+        foodStatus[i] = a;
+    }
+
+    //trueなら籠なしかつ存在する, falseなら籠がかかっているか存在しない
     public bool GetFoodStatus(int i)
     {
         return foodStatus[i];
     }
+
+
+    // 猫缶を消す(ゲームの見た目上からは)
+    public void DeleteCatFood(int i)
+    {
+        catFood[i].gameObject.transform.position = new Vector3(0, -200, -100);
+    }
+
 }

@@ -19,6 +19,8 @@ public class CatMoving : MonoBehaviour
     Rigidbody2D rb;
 
     Vector3 angles;
+    Transform myTransform;
+    Vector3 worldAngle;
 
     private ItemController itemController;
 
@@ -40,10 +42,17 @@ public class CatMoving : MonoBehaviour
     void Update()
     {
 
+        // transformを取得
+        myTransform = this.transform;
+
+        // ワールド座標を基準に、回転を取得
+        worldAngle = myTransform.eulerAngles;
+
         //猫の移動する速さはランダムに設定する
         catSpeed = Random.Range(1.5f, 3.0f);
 
         int food = FoodChecker();
+        Debug.Log(food);
         if (food == -1)
         {
             //プレイヤーを動かす
@@ -54,12 +63,6 @@ public class CatMoving : MonoBehaviour
             // 一定の秒数餌の元にいたら猫缶は消え、前を向く
             StartCoroutine(DestroyCatFood(food));
         }
-
-        //自分で作った重力
-        Vector2 myGravity = new Vector2(0, -9.81f);
-
-        //Rigidbody2Dに重力を加える
-        rb.AddForce(myGravity);
 
 
         if (time.GetComponent<TimerController>().TimeManager() <= 0)
@@ -93,12 +96,6 @@ public class CatMoving : MonoBehaviour
         if (collision.gameObject.CompareTag("wood"))
         {
             angles = new Vector3(0, 0, collision.gameObject.transform.localEulerAngles.z);
-
-            //自分で作った重力
-            Vector2 myGravity = new Vector2(0, 9.81f);
-
-            //Rigidbody2Dに重力を加える
-            rb.AddForce(myGravity);
         }
     }
 
@@ -126,7 +123,8 @@ public class CatMoving : MonoBehaviour
     // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
     IEnumerator DestroyCatFood(int i)
     {
-        angles = new Vector3(0, 180, 0);
+        worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
+        myTransform.eulerAngles = worldAngle; // 回転角度を設定
 
         if (1.4 <= transform.position.x - catFood[i].gameObject.transform.position.x)
         {
@@ -140,10 +138,11 @@ public class CatMoving : MonoBehaviour
         itemController.DeleteCatFood(i);
 
         // 存在の抹消
-        itemController.SetFoodStatus(i, false);
+        itemController.SetFoodStatus(i, true);
 
-        //前を向く
-        angles = new Vector3(0, 0, 0);
+        worldAngle.y = 0.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
+        myTransform.eulerAngles = worldAngle; // 回転角度を設定
+
     }
 
     //猫が1秒間にどれだけの距離(x軸方向)進んでいるのか調べる(基本的にはupdate関数内で使う想定)

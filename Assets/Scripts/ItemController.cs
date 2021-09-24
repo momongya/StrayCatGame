@@ -50,7 +50,7 @@ public class ItemController : MonoBehaviour
         foodStatus[i] = a;
     }
 
-    //trueなら籠なしかつ存在する, falseなら籠がかかっているか存在しない
+    //falseなら籠なしかつ存在する, trueなら籠がかかっているか存在しない
     public bool GetFoodStatus(int i)
     {
         return foodStatus[i];

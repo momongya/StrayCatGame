@@ -52,7 +52,6 @@ public class CatMoving : MonoBehaviour
         catSpeed = Random.Range(1.5f, 3.0f);
 
         int food = FoodChecker();
-        Debug.Log(food);
         if (food == -1)
         {
             //プレイヤーを動かす
@@ -89,6 +88,9 @@ public class CatMoving : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        //重力を停止させる
+        rb.isKinematic = true;
+
         //猫の角度は接する床面に依存する(z軸だけ)
         transform.rotation = Quaternion.AngleAxis(collision.gameObject.transform.localEulerAngles.z, new Vector3(0,0,1));
 
@@ -97,6 +99,12 @@ public class CatMoving : MonoBehaviour
         {
             angles = new Vector3(0, 0, collision.gameObject.transform.localEulerAngles.z);
         }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        //重力を可動させる
+        rb.isKinematic = false;
     }
 
     // 猫の餌が近くにあるかどうか判別し、猫の餌が近くにあっても籠がかかっていれば近寄らない
@@ -123,10 +131,13 @@ public class CatMoving : MonoBehaviour
     // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
     IEnumerator DestroyCatFood(int i)
     {
-        worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
-        myTransform.eulerAngles = worldAngle; // 回転角度を設定
+        if (transform.position.x > catFood[i].gameObject.transform.position.x)
+        {
+            worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
+            myTransform.eulerAngles = worldAngle; // 回転角度を設定
+        }
 
-        if (1.4 <= transform.position.x - catFood[i].gameObject.transform.position.x)
+        if (1.4 <= Mathf.Abs(transform.position.x - catFood[i].gameObject.transform.position.x))
         {
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
         }

@@ -34,22 +34,19 @@ public class CatMoving : MonoBehaviour
     {
        // Rigidbody2Dを取得
         rb = GetComponent<Rigidbody2D>();
-
-        //猫の回転角を取得
     }
 
     // Update is called once per frame
     void Update()
     {
-
         // transformを取得
         myTransform = this.transform;
 
         // ワールド座標を基準に、回転を取得
         worldAngle = myTransform.eulerAngles;
 
-        //猫の移動する速さはランダムに設定する
-        catSpeed = Random.Range(1.5f, 3.0f);
+        //猫の移動する速さ設定
+        catSpeed = 2.0f;
 
         int food = FoodChecker();
         if (food == -1)
@@ -63,7 +60,7 @@ public class CatMoving : MonoBehaviour
             StartCoroutine(DestroyCatFood(food));
         }
 
-
+        //画面遷移
         if (time.GetComponent<TimerController>().TimeManager() <= 0)
         {
             SceneManager.LoadScene("GameOver");
@@ -74,37 +71,23 @@ public class CatMoving : MonoBehaviour
             SceneManager.LoadScene("Goal");
         }
 
+        //カメラの移動を設定
         came.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
-    }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        //もし丸太の足場にあたったら
-        if (collision.gameObject.CompareTag("wood"))
+        //猫が前にあまり進んでいない時の設定
+        if (CheckMoving() > 2.0)
         {
-            //rb.velocity = new Vector3(0, 3, 0);
+            //猫の位置
+            myTransform.position = transform.position;
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        //重力を停止させる
-        rb.isKinematic = true;
+        catSpeed = 3.5f;
 
         //猫の角度は接する床面に依存する(z軸だけ)
-        transform.rotation = Quaternion.AngleAxis(collision.gameObject.transform.localEulerAngles.z, new Vector3(0,0,1));
-
-        //もし丸太の足場にあたったなら、丸太の角度に移動する
-        if (collision.gameObject.CompareTag("wood"))
-        {
-            angles = new Vector3(0, 0, collision.gameObject.transform.localEulerAngles.z);
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        //重力を可動させる
-        rb.isKinematic = false;
+        transform.rotation = Quaternion.AngleAxis(collision.gameObject.transform.localEulerAngles.z, new Vector3(0, 0, 1));
     }
 
     // 猫の餌が近くにあるかどうか判別し、猫の餌が近くにあっても籠がかかっていれば近寄らない

@@ -8,6 +8,7 @@ public class CatMoving : MonoBehaviour
 {
 
     float catSpeed;
+    float timer;
     public GameObject goal;
     public GameObject time;
 
@@ -21,6 +22,9 @@ public class CatMoving : MonoBehaviour
     Vector3 angles;
     Transform myTransform;
     Vector3 worldAngle;
+
+    float maxX = -1;
+    float minX = 0;
 
     private ItemController itemController;
 
@@ -48,8 +52,18 @@ public class CatMoving : MonoBehaviour
         //猫の移動する速さ設定
         catSpeed = 2.0f;
 
+        timer = 100;
+
         int food = FoodChecker();
-        if (food == -1)
+
+        float checkMoving = CheckMoving();
+        Debug.Log(checkMoving);
+        if (0< checkMoving && checkMoving <= 1.0)
+        { 
+            //ねこは少し下がって3秒待機
+            StartCoroutine(WaitCatMoving());
+        }
+        else if (food == -1)
         {
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
@@ -143,23 +157,38 @@ public class CatMoving : MonoBehaviour
     //猫がほとんどその場で止まっているよう(つまり壁や障害物にぶつかっている時)
     float CheckMoving()
     {
-        float time = 0;
-        float maxX = -1;
-        float minX = 0;
+        //だいたい2秒ごとに動く
+        float timeleft = 1.0f;
+        timeleft -= Time.deltaTime;
 
-        time += Time.deltaTime;
-        while(time >= 1.0f)
+        if (timeleft <= 0.0)
         {
-            if (maxX > transform.position.x)
+            if (maxX < transform.position.x)
             {
                 maxX = transform.position.x;
             }
-            if (minX < transform.position.x)
+            if (minX > transform.position.x)
             {
                 minX = transform.position.x;
             }
         }
 
         return maxX - minX;
+    }
+
+    //猫さんは壁にぶつかって前に進めない時は少し下がって3秒待つ
+    //少し下がって3秒待つ動作
+    IEnumerator WaitCatMoving()
+    {
+        timer += Time.deltaTime;
+
+        //1秒間下がる
+        while (timer >= 1.0)
+        {
+            transform.position -= transform.right * catSpeed * Time.deltaTime;
+        }
+
+        // 3秒停止
+        yield return new WaitForSeconds(3);
     }
 }

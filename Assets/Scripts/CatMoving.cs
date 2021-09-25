@@ -26,11 +26,15 @@ public class CatMoving : MonoBehaviour
     float maxX = -1;
     float minX = 0;
 
+    float timeleft;
+
     private ItemController itemController;
 
     private void Awake()
     {
         itemController = foodCreator.gameObject.GetComponent<ItemController>();
+
+        timeleft = 1.0f;
     }
 
     // Start is called before the first frame update
@@ -157,20 +161,23 @@ public class CatMoving : MonoBehaviour
     //猫がほとんどその場で止まっているよう(つまり壁や障害物にぶつかっている時)
     float CheckMoving()
     {
-        //だいたい2秒ごとに動く
-        float timeleft = 1.0f;
+        //だいたい1秒ごとに動く
         timeleft -= Time.deltaTime;
+
+        if (maxX < transform.position.x)
+        {
+            maxX = transform.position.x;
+        }
+        if (minX > transform.position.x)
+        {
+            minX = transform.position.x;
+        }
 
         if (timeleft <= 0.0)
         {
-            if (maxX < transform.position.x)
-            {
-                maxX = transform.position.x;
-            }
-            if (minX > transform.position.x)
-            {
-                minX = transform.position.x;
-            }
+            timeleft = 1.0f;
+            maxX = -1;
+            minX = 0;
         }
 
         return maxX - minX;

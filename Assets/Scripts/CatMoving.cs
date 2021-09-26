@@ -8,7 +8,6 @@ public class CatMoving : MonoBehaviour
 {
 
     float catSpeed;
-    float timer;
     public GameObject goal;
     public GameObject time;
 
@@ -24,9 +23,14 @@ public class CatMoving : MonoBehaviour
     Vector3 worldAngle;
 
     float maxX = -1;
-    float minX = 0;
+    float minX = 10000;
+    float sumMove = 100;
 
     float timeleft;
+    float timing;
+
+    bool startCatDown = false;
+    bool stopCat = false;
 
     private ItemController itemController;
 
@@ -35,6 +39,7 @@ public class CatMoving : MonoBehaviour
         itemController = foodCreator.gameObject.GetComponent<ItemController>();
 
         timeleft = 1.0f;
+        timing = 0f;
     }
 
     // Start is called before the first frame update
@@ -56,16 +61,21 @@ public class CatMoving : MonoBehaviour
         //猫の移動する速さ設定
         catSpeed = 2.0f;
 
-        timer = 100;
-
         int food = FoodChecker();
 
         float checkMoving = CheckMoving();
-        Debug.Log(checkMoving);
-        if (0< checkMoving && checkMoving <= 1.0)
-        { 
+
+        if (0 < checkMoving && checkMoving <= 0.5)
+        {
+            stopCat = true;
+        }
+     
+        if (stopCat == true && startCatDown == false)
+        {
             //ねこは少し下がって3秒待機
             StartCoroutine(WaitCatMoving());
+            Debug.Log(checkMoving);
+            startCatDown = true;
         }
         else if (food == -1)
         {
@@ -76,6 +86,7 @@ public class CatMoving : MonoBehaviour
         {
             // 一定の秒数餌の元にいたら猫缶は消え、前を向く
             StartCoroutine(DestroyCatFood(food));
+            timeleft = 1.0f;
         }
 
         //画面遷移
@@ -175,27 +186,35 @@ public class CatMoving : MonoBehaviour
 
         if (timeleft <= 0.0)
         {
-            timeleft = 1.0f;
+            sumMove = maxX - minX;
+            timeleft = 2.0f;
             maxX = -1;
-            minX = 0;
+            minX = 10000;
         }
 
-        return maxX - minX;
+        return sumMove;
     }
 
     //猫さんは壁にぶつかって前に進めない時は少し下がって3秒待つ
     //少し下がって3秒待つ動作
     IEnumerator WaitCatMoving()
     {
-        timer += Time.deltaTime;
+        timing += Time.deltaTime;
 
         //1秒間下がる
-        while (timer >= 1.0)
+        while (timing <= 1.0)
         {
             transform.position -= transform.right * catSpeed * Time.deltaTime;
         }
 
+        if (timing > 1.0)
+        {
+            timing = 0;
+        }
+
         // 3秒停止
         yield return new WaitForSeconds(3);
+
+        startCatDown = false;
     }
 }

@@ -29,7 +29,11 @@ public class CatMoving : MonoBehaviour
     float timeleft;
     float timing;
 
+    //
     bool startCatDown = false;
+
+    //猫の進んでいる位置で止まっているか否かの判別
+    //falseなら進んでいる
     bool stopCat = false;
 
     private ItemController itemController;
@@ -72,13 +76,33 @@ public class CatMoving : MonoBehaviour
      
         if (stopCat == true && startCatDown == false)
         {
+            timing += Time.deltaTime;
+
+            //2秒間下がる
+            if (timing <= 2.0)
+            {
+                transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
+            }
+
+            Debug.Log(checkMoving);
             //ねこは少し下がって3秒待機
             StartCoroutine(WaitCatMoving());
-            Debug.Log(checkMoving);
-            startCatDown = true;
+
+            //1秒間は確実に進ませる
+            if (timing > 1.0)
+            {
+                startCatDown = false;
+                timing = 0f;
+            }
+            else
+            {
+                timing += Time.deltaTime;
+            }
         }
         else if (food == -1)
         {
+
+
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
         }
@@ -199,22 +223,18 @@ public class CatMoving : MonoBehaviour
     //少し下がって3秒待つ動作
     IEnumerator WaitCatMoving()
     {
-        timing += Time.deltaTime;
+        // 秒停止
+        yield return new WaitForSeconds(5);
 
-        //1秒間下がる
-        while (timing <= 1.0)
+        timing = 0;
+        startCatDown = true;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "ground")
         {
-            transform.position -= transform.right * catSpeed * Time.deltaTime;
+            angles = new Vector3(0, 0, 0);
         }
-
-        if (timing > 1.0)
-        {
-            timing = 0;
-        }
-
-        // 3秒停止
-        yield return new WaitForSeconds(3);
-
-        startCatDown = false;
     }
 }

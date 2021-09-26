@@ -221,7 +221,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 32543984}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 160197100}
+        m_TargetAssemblyTypeName: GameStarter, Assembly-CSharp
+        m_MethodName: LoadGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &32543984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,6 +284,7 @@ GameObject:
   - component: {fileID: 160197098}
   - component: {fileID: 160197097}
   - component: {fileID: 160197096}
+  - component: {fileID: 160197100}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -361,6 +374,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &160197100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160197095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf99319f3c121499681c100f1885c33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &376671673
 GameObject:
   m_ObjectHideFlags: 0

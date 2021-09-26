@@ -172,7 +172,7 @@ public class CatMoving : MonoBehaviour
     {
         if (transform.position.x > catFood[i].gameObject.transform.position.x)
         {
-            worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
+            worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を180度に変更
             myTransform.eulerAngles = worldAngle; // 回転角度を設定
         }
 

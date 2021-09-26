@@ -14,6 +14,7 @@ public class CatMoving : MonoBehaviour
     public GameObject[] catFood;
     public GameObject foodCreator;
     public GameObject came;
+    public GameObject sky;
 
     //変数を作る
     Rigidbody2D rb;
@@ -125,6 +126,9 @@ public class CatMoving : MonoBehaviour
 
         //カメラの移動を設定
         came.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+
+        //空の移動を設定
+        sky.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y);
 
         //猫が前にあまり進んでいない時の設定
         if (CheckMoving() > 2.0)

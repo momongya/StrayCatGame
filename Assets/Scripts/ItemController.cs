@@ -6,6 +6,7 @@ public class ItemController : MonoBehaviour
 {
     public GameObject cage;
     public GameObject[] catFood;
+    public GameObject cat;
 
     bool[] foodStatus;
     int i;
@@ -35,7 +36,7 @@ public class ItemController : MonoBehaviour
             //猫缶から場所がそう離れていなければ
             for (i = 0; i < catFood.Length; i++)
             {
-                if ((catFood[i].gameObject.transform.position.x - mousePos.x) < 10)
+                if ((catFood[i].gameObject.transform.position.x - mousePos.x) < 10 && cat.gameObject.transform.position.x + 10 > catFood[i].gameObject.transform.position.x)
                 {
                     //籠を生成する
                     Instantiate(cage, new Vector3(catFood[i].gameObject.transform.position.x, catFood[i].gameObject.transform.position.y + 0.38f, 10), Quaternion.identity);

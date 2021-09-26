@@ -84,7 +84,6 @@ public class CatMoving : MonoBehaviour
                 transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
             }
 
-            Debug.Log(checkMoving);
             //ねこは少し下がって3秒待機
             StartCoroutine(WaitCatMoving());
 

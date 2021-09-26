@@ -59,9 +59,4 @@ public class WoodCreator : MonoBehaviour
 
         return degree;
     }
-
-    public void DeleteWood()
-    {
-        Destroy(wood.gameObject);
-    }
 }

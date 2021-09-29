@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class WoodCreator : MonoBehaviour
 {
@@ -22,10 +23,12 @@ public class WoodCreator : MonoBehaviour
     GameObject tmp1;
     GameObject tmp2;
 
+    public Slider leafSlider;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        leafSlider.value = 1;
     }
 
     // Update is called once per frame
@@ -39,10 +42,17 @@ public class WoodCreator : MonoBehaviour
         {
             if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && Camera.main.ScreenToWorldPoint(mousePos).y <= 4)
             {
-                //葉っぱを生成する
-                GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
-                leavesList.Add(Leaves);
+                if (leafSlider.value > 0)
+                {
+                    //葉っぱを生成する
+                    GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
+                    leavesList.Add(Leaves);
+                    leafSlider.value -= Time.deltaTime * 2;
+                }
             }
+        }else
+        {
+            leafSlider.value += 3 * Time.deltaTime;
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -53,7 +63,7 @@ public class WoodCreator : MonoBehaviour
             indexOfLeaf = leavesList.Count;
 
             // 描いた葉っぱの中から真ん中を探す
-            centerLeaf = leavesList[(int)(indexOfLeaf - 1) / 2];
+            centerLeaf = leavesList[(int)(indexOfLeaf/ 2 - 1)];
 
             //　真ん中の葉っぱから一番遠いものを見つける
             foreach (var str in leavesList)

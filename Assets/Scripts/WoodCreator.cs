@@ -37,7 +37,7 @@ public class WoodCreator : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && Camera.main.ScreenToWorldPoint(mousePos).y <= 2)
+            if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && Camera.main.ScreenToWorldPoint(mousePos).y <= 4)
             {
                 //葉っぱを生成する
                 GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
@@ -81,6 +81,15 @@ public class WoodCreator : MonoBehaviour
                 }
             }
 
+
+            //y座標の小さい方を基準点にする
+            if (tmp1.gameObject.transform.position.y > tmp2.gameObject.transform.position.y)
+            {
+                GameObject tmp = tmp1;
+                tmp1 = tmp2;
+                tmp2 = tmp;
+            }
+
             //丸太の設置位置(葉っぱ生成の初めの地点と終わりの地点を繋いだところ)設定
             woodPoint = new Vector3((tmp1.gameObject.transform.position.x + tmp2.gameObject.transform.position.x) / 2, (tmp1.gameObject.transform.position.y + tmp2.gameObject.transform.position.y) / 2, 0);
             //丸太を生成
@@ -97,11 +106,10 @@ public class WoodCreator : MonoBehaviour
 
     public void DeleteWoods()
     {
-        foreach (var str in woodList)
+        foreach (var s in woodList)
         {
-            Destroy(str);
+            Destroy(s);
         }
-        woodList.Clear();
     }
 
     //角度を求めて返すメゾット

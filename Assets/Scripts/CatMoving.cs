@@ -30,7 +30,6 @@ public class CatMoving : MonoBehaviour
     float timeleft;
     float timing;
 
-    //
     bool startCatDown = false;
 
     //猫の進んでいる位置で止まっているか否かの判別
@@ -79,8 +78,8 @@ public class CatMoving : MonoBehaviour
         {
             timing += Time.deltaTime;
 
-            //2秒間下がる
-            if (timing <= 2.0)
+            //1秒間下がる
+            if (timing <= 1.0)
             {
                 transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
             }
@@ -101,8 +100,6 @@ public class CatMoving : MonoBehaviour
         }
         else if (food == -1)
         {
-
-
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
         }
@@ -112,7 +109,7 @@ public class CatMoving : MonoBehaviour
             StartCoroutine(DestroyCatFood(food));
             timeleft = 1.0f;
         }
-
+        
         //画面遷移
         if (time.GetComponent<TimerController>().TimeManager() <= 0)
         {
@@ -129,13 +126,6 @@ public class CatMoving : MonoBehaviour
 
         //空の移動を設定
         sky.gameObject.transform.position = new Vector3(transform.position.x, transform.position.y);
-
-        //猫が前にあまり進んでいない時の設定
-        if (CheckMoving() > 2.0)
-        {
-            //猫の位置
-            myTransform.position = transform.position;
-        }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -143,7 +133,10 @@ public class CatMoving : MonoBehaviour
         catSpeed = 3.5f;
 
         //猫の角度は接する床面に依存する(z軸だけ)
-        transform.rotation = Quaternion.AngleAxis(collision.gameObject.transform.localEulerAngles.z, new Vector3(0, 0, 1));
+        if (50 > collision.gameObject.transform.localEulerAngles.z && collision.gameObject.transform.localEulerAngles.z >= -60)
+        {
+            transform.rotation = Quaternion.AngleAxis(collision.gameObject.transform.localEulerAngles.z, new Vector3(0, 0, 1));
+        }
     }
 
     // 猫の餌が近くにあるかどうか判別し、猫の餌が近くにあっても籠がかかっていれば近寄らない
@@ -190,7 +183,7 @@ public class CatMoving : MonoBehaviour
         // 存在の抹消
         itemController.SetFoodStatus(i, true);
 
-        worldAngle.y = 0.0f; // ワールド座標を基準に、y軸を軸にした回転を10度に変更
+        worldAngle.y = 0.0f; // ワールド座標を基準に、y軸を軸にした回転を0度に変更
         myTransform.eulerAngles = worldAngle; // 回転角度を設定
 
     }
@@ -227,7 +220,7 @@ public class CatMoving : MonoBehaviour
     IEnumerator WaitCatMoving()
     {
         // 秒停止
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
 
         timing = 0;
         startCatDown = true;
@@ -235,11 +228,12 @@ public class CatMoving : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("OnCollision");
         if (collision.gameObject.tag == "ground")
         {
             angles = new Vector3(0, 0, 0);
-            Debug.Log("ground");
+            float x = 0.0f;
+            this.transform.Rotate(0.0f, 0.0f, x);
+
         }
     }
 }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - wood
+  - ground
   layers:
   - Default
   - TransparentFX

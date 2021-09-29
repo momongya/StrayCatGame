@@ -1,20 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class WoodCreator : MonoBehaviour
 {
     public GameObject leaf;
     public GameObject wood;
 
+    List<GameObject> leavesList = new List<GameObject>();
     List<GameObject> woodList = new List<GameObject>();
 
-    Vector3 startPoint, endPoint, woodPoint;
+    Vector3 woodPoint;
+
+    int indexOfLeaf;
+    // 一番遠いもの
+    double maxDistance;
+    //一時的に保存する距離の情報
+    double distance;
+    GameObject centerLeaf;
+    GameObject tmp1;
+    GameObject tmp2;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -24,37 +35,63 @@ public class WoodCreator : MonoBehaviour
         // Z軸修正
         mousePos.z = 10f;
 
-        if (mousePos.y < 900)
+        if (Input.GetMouseButton(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && Camera.main.ScreenToWorldPoint(mousePos).y <= 2)
             {
                 //葉っぱを生成する
-                Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
-                //葉っぱ生成のスタート地点を記録する
-                startPoint = Camera.main.ScreenToWorldPoint(mousePos);
+                GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
+                leavesList.Add(Leaves);
             }
+        }
 
-            if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonUp(0))
+        {
+            distance = 0;
+            maxDistance = 0;
+
+            indexOfLeaf = leavesList.Count;
+
+            // 描いた葉っぱの中から真ん中を探す
+            centerLeaf = leavesList[(int)(indexOfLeaf - 1) / 2];
+
+            //　真ん中の葉っぱから一番遠いものを見つける
+            foreach (var str in leavesList)
             {
-                //葉っぱを生成する
-                Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
+                // 真ん中の葉っぱからの距離の二乗を計算
+                distance = Math.Pow(Math.Pow(centerLeaf.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(centerLeaf.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
+                // 一番遠いものを一つ見つける
+                if (maxDistance < distance)
+                {
+                    maxDistance = distance;
+                    tmp1 = str;
+                }
             }
 
-            if (Input.GetMouseButtonUp(0))
+            //見つけた一番遠い葉っぱから一番遠い葉っぱを発見する
+            foreach (var str in leavesList)
             {
-                //葉っぱ生成の終わりの地点を記録する
-                endPoint = Camera.main.ScreenToWorldPoint(mousePos);
-
-                //丸太の設置位置(葉っぱ生成の初めの地点と終わりの地点を繋いだところ)設定
-                woodPoint = new Vector3((startPoint.x + endPoint.x) / 2, (startPoint.y + endPoint.y) / 2, 0);
-                //丸太を生成
-                GameObject scaffold = Instantiate(wood, woodPoint, Quaternion.Euler(0f, 0f, GetAngle(startPoint, endPoint)));
-                //生成した丸太のサイズ変更(デフォルトサイズ(positionでいうと): x方向5)
-                scaffold.transform.localScale = new Vector3(0.33f * Mathf.Abs(startPoint.x - endPoint.x) / 5, 0.25f * (Mathf.Abs(startPoint.x - endPoint.x) / 5) % 5, 0);
-
-                //生成した丸太を一括消去用配列に追加
-                woodList.Add(scaffold);
+                // 真ん中の葉っぱからの距離の二乗を計算
+                distance = Math.Pow(Math.Pow(tmp1.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(tmp1.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
+                // 一番遠いものを一つ見つける
+                if (maxDistance < distance)
+                {
+                    maxDistance = distance;
+                    tmp2 = str;
+                }
             }
+
+            //丸太の設置位置(葉っぱ生成の初めの地点と終わりの地点を繋いだところ)設定
+            woodPoint = new Vector3((tmp1.gameObject.transform.position.x + tmp2.gameObject.transform.position.x) / 2, (tmp1.gameObject.transform.position.y + tmp2.gameObject.transform.position.y) / 2, 0);
+            //丸太を生成
+            GameObject scaffold = Instantiate(wood, woodPoint, Quaternion.Euler(0f, 0f, GetAngle(tmp1.gameObject.transform.position, tmp2.gameObject.transform.position)));
+            //生成した丸太のサイズ変更(デフォルトサイズ(positionでいうと): x方向5)
+            scaffold.transform.localScale = new Vector3(0.33f * Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5, 0.25f * (Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5) % 5, 0);
+
+            //生成した丸太を一括消去用配列に追加
+            woodList.Add(scaffold);
+            // 葉っぱリストの中身を削除
+            leavesList.Clear();
         }
     }
 
@@ -64,6 +101,7 @@ public class WoodCreator : MonoBehaviour
         {
             Destroy(str);
         }
+        woodList.Clear();
     }
 
     //角度を求めて返すメゾット

@@ -235,9 +235,11 @@ public class CatMoving : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("OnCollision");
         if (collision.gameObject.tag == "ground")
         {
             angles = new Vector3(0, 0, 0);
+            Debug.Log("ground");
         }
     }
 }

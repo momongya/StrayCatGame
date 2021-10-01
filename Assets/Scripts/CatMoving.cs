@@ -78,8 +78,8 @@ public class CatMoving : MonoBehaviour
         {
             timing += Time.deltaTime;
 
-            //1秒間下がる
-            if (timing <= 1.0)
+            //0.5秒間下がる
+            if (timing < 0.5)
             {
                 transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
             }
@@ -216,11 +216,11 @@ public class CatMoving : MonoBehaviour
     }
 
     //猫さんは壁にぶつかって前に進めない時は少し下がって3秒待つ
-    //少し下がって3秒待つ動作
+    //少し下がって2秒待つ動作
     IEnumerator WaitCatMoving()
     {
         // 秒停止
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
 
         timing = 0;
         startCatDown = true;

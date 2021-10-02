@@ -25,8 +25,6 @@ public class WoodCreator : MonoBehaviour
 
     public Slider leafSlider;
 
-    bool placeChecker = false;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -40,43 +38,33 @@ public class WoodCreator : MonoBehaviour
         // Z軸修正
         mousePos.z = 10f;
 
-        Debug.Log(Camera.main.ScreenToWorldPoint(mousePos).y);
-
-        placeChecker = false;
-
-        if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && 3.2 >= Camera.main.ScreenToWorldPoint(mousePos).y)
+        if (Input.GetMouseButton(0))
         {
-            if (mousePos.y <= 920)
+            if (-4 <= Camera.main.ScreenToWorldPoint(mousePos).y && Camera.main.ScreenToWorldPoint(mousePos).y <= 3.2)
             {
-                placeChecker = true;
+                if (leafSlider.value > 0 && mousePos.y <= 920)
+                {
+                    //葉っぱを生成する
+                    GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
+                    leavesList.Add(Leaves);
+                    leafSlider.value -= Time.deltaTime * 2;
+                }
             }
-        }
-
-        if (Input.GetMouseButton(0) && placeChecker == true)
-        {
-            if (leafSlider.value > 0)
-            {
-                //葉っぱを生成する
-                GameObject Leaves = Instantiate(leaf, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
-                leavesList.Add(Leaves);
-                leafSlider.value -= Time.deltaTime * 2;
-            }
-
         }
         else
         {
             leafSlider.value += 3 * Time.deltaTime;
         }
 
-        if (Input.GetMouseButtonUp(0) && placeChecker == true)
+        if (Input.GetMouseButtonUp(0))
         {
             distance = 0;
             maxDistance = 0;
 
-            indexOfLeaf = leavesList.Count / 2;
+            indexOfLeaf = leavesList.Count;
 
             // 描いた葉っぱの中から真ん中を探す
-            centerLeaf = leavesList[(int)indexOfLeaf];
+            centerLeaf = leavesList[(int)(indexOfLeaf / 2 - 1)];
 
             //　真ん中の葉っぱから一番遠いものを見つける
             foreach (var str in leavesList)

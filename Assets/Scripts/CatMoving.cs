@@ -229,11 +229,12 @@ public class CatMoving : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+
         if (collision.gameObject.tag == "ground")
         {
-            angles = new Vector3(0, 0, 0);
-            float x = 0.0f;
-            this.transform.Rotate(0.0f, 0.0f, x);
+            worldAngle.y = 0.0f;
+            worldAngle.x = 0.0f;
+            //myTransform.eulerAngles = worldAngle; // 回転角度を設定
 
         }
     }

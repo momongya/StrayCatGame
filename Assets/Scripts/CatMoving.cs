@@ -74,31 +74,32 @@ public class CatMoving : MonoBehaviour
             stopCat = true;
         }
      
-        if (stopCat == true && startCatDown == false)
-        {
-            timing += Time.deltaTime;
+        //if (stopCat == true && startCatDown == false)
+        //{
+        //    timing += Time.deltaTime;
 
-            //0.5秒間下がる
-            if (timing < 0.5)
-            {
-                transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
-            }
+        //    //0.5秒間下がる
+        //    if (timing < 0.5)
+        //    {
+        //        transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
+        //    }
 
-            //ねこは少し下がって3秒待機
-            StartCoroutine(WaitCatMoving());
+        //    //ねこは少し下がって3秒待機
+        //    StartCoroutine(WaitCatMoving());
 
-            //1秒間は確実に進ませる
-            if (timing > 1.0)
-            {
-                startCatDown = false;
-                timing = 0f;
-            }
-            else
-            {
-                timing += Time.deltaTime;
-            }
-        }
-        else if (food == -1)
+        //    //1秒間は確実に進ませる
+        //    if (timing > 1.0)
+        //    {
+        //        startCatDown = false;
+        //        timing = 0f;
+        //    }
+        //    else
+        //    {
+        //        timing += Time.deltaTime;
+        //    }
+        //}
+        //else
+        if (food == -1)
         {
             //プレイヤーを動かす
             transform.position += Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
@@ -163,7 +164,7 @@ public class CatMoving : MonoBehaviour
     // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
     IEnumerator DestroyCatFood(int i)
     {
-        if (transform.position.x > catFood[i].gameObject.transform.position.x)
+        if (i == 0)
         {
             worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を180度に変更
             myTransform.eulerAngles = worldAngle; // 回転角度を設定

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class TimerController : MonoBehaviour
 {
-    public float timer = 70f;
+    public static float timer = 70f;
     public Text timerText;
 
     void Start()

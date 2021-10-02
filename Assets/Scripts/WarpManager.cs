@@ -12,6 +12,7 @@ public class WarpManager : MonoBehaviour
     Sprite spriteMae;
     public Sprite spriteAto;
     public Image warpButton;
+    public Text warpText;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +39,7 @@ public class WarpManager : MonoBehaviour
             flag[0].SetActive(true);
             flagManage[0] = true;
             warpButton.gameObject.GetComponent<Image>().sprite = spriteAto;
+            warpText.text = "ワープ";
         }
         if (transform.position.x >= flag[1].gameObject.transform.position.x && flagManage[1] == false)
         {

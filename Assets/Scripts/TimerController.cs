@@ -16,7 +16,7 @@ public class TimerController : MonoBehaviour
     void Update()
     {
         timer -= Time.deltaTime;
-        timerText.text = timer.ToString("残り時間 : " + "0" + "秒");
+        timerText.text = timer.ToString("残り " + "0" + "秒");
     }
 
     public float TimeManager()

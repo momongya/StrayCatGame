@@ -32,6 +32,9 @@ public class CatMoving : MonoBehaviour
 
     bool startCatDown = false;
 
+    //猫は一回だけ後ろを向く
+    bool checkBack = false;
+
     //猫の進んでいる位置で止まっているか否かの判別
     //falseなら進んでいる
     bool stopCat = false;
@@ -53,14 +56,18 @@ public class CatMoving : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
         // transformを取得
         myTransform = this.transform;
 
         // ワールド座標を基準に、回転を取得
         worldAngle = myTransform.eulerAngles;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
         //猫の移動する速さ設定
         catSpeed = 2.0f;
@@ -74,31 +81,6 @@ public class CatMoving : MonoBehaviour
             stopCat = true;
         }
      
-        //if (stopCat == true && startCatDown == false)
-        //{
-        //    timing += Time.deltaTime;
-
-        //    //0.5秒間下がる
-        //    if (timing < 0.5)
-        //    {
-        //        transform.position -= Quaternion.Euler(angles) * transform.right * catSpeed * Time.deltaTime;
-        //    }
-
-        //    //ねこは少し下がって3秒待機
-        //    StartCoroutine(WaitCatMoving());
-
-        //    //1秒間は確実に進ませる
-        //    if (timing > 1.0)
-        //    {
-        //        startCatDown = false;
-        //        timing = 0f;
-        //    }
-        //    else
-        //    {
-        //        timing += Time.deltaTime;
-        //    }
-        //}
-        //else
         if (food == -1)
         {
             //プレイヤーを動かす
@@ -164,10 +146,11 @@ public class CatMoving : MonoBehaviour
     // 一定の秒数餌の元にいたら猫缶は消え、猫は前に進み出す
     IEnumerator DestroyCatFood(int i)
     {
-        if (i == 0)
+        if (i == 0　&& checkBack == false)
         {
             worldAngle.y = 180.0f; // ワールド座標を基準に、y軸を軸にした回転を180度に変更
             myTransform.eulerAngles = worldAngle; // 回転角度を設定
+            checkBack = true;
         }
 
         if (1.4 <= Mathf.Abs(transform.position.x - catFood[i].gameObject.transform.position.x))
@@ -234,8 +217,7 @@ public class CatMoving : MonoBehaviour
         {
             worldAngle.y = 0.0f;
             worldAngle.x = 0.0f;
-            //myTransform.eulerAngles = worldAngle; // 回転角度を設定
-
+            myTransform.eulerAngles = worldAngle; // 回転角度を設定
         }
     }
 }

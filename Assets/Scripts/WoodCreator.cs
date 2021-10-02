@@ -56,62 +56,80 @@ public class WoodCreator : MonoBehaviour
             leafSlider.value += 3 * Time.deltaTime;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && leavesList.Count > 0)
         {
-            distance = 0;
-            maxDistance = 0;
-
             indexOfLeaf = leavesList.Count;
+            distance = Math.Pow(Math.Pow(leavesList[0].gameObject.transform.position.x - leavesList[leavesList.Count-1].gameObject.transform.position.x, 2) + Math.Pow(leavesList[0].gameObject.transform.position.y - leavesList[leavesList.Count - 1].gameObject.transform.position.y, 2), 0.5);
 
-            // 描いた葉っぱの中から真ん中を探す
-            centerLeaf = leavesList[(int)(indexOfLeaf / 2 - 1)];
-
-            //　真ん中の葉っぱから一番遠いものを見つける
-            foreach (var str in leavesList)
+            if (indexOfLeaf  < 3 || distance < 2f)
             {
-                // 真ん中の葉っぱからの距離の二乗を計算
-                distance = Math.Pow(Math.Pow(centerLeaf.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(centerLeaf.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
-                // 一番遠いものを一つ見つける
-                if (maxDistance < distance)
+                //丸太の設置位置設定
+                woodPoint = leavesList[0].gameObject.transform.position;
+                //丸太を生成
+                GameObject scaffold = Instantiate(wood, woodPoint, Quaternion.Euler(0f, 0f, 30f));
+                //生成した丸太のサイズ変更(デフォルトサイズ(positionでいうと): x方向5)
+                scaffold.transform.localScale = new Vector3(0.11f, 0.22f, 0);
+
+                //生成した丸太を一括消去用配列に追加
+                woodList.Add(scaffold);
+                // 葉っぱリストの中身を削除
+                leavesList.Clear();
+            }
+            else
+            {
+                distance = 0;
+                maxDistance = 0;
+
+                // 描いた葉っぱの中から真ん中を探す
+                centerLeaf = leavesList[(int)(indexOfLeaf / 2 - 1)];
+
+                //　真ん中の葉っぱから一番遠いものを見つける
+                foreach (var str in leavesList)
                 {
-                    maxDistance = distance;
-                    tmp1 = str;
+                    // 真ん中の葉っぱからの距離の二乗を計算
+                    distance = Math.Pow(Math.Pow(centerLeaf.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(centerLeaf.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
+                    // 一番遠いものを一つ見つける
+                    if (maxDistance < distance)
+                    {
+                        maxDistance = distance;
+                        tmp1 = str;
+                    }
                 }
-            }
 
-            //見つけた一番遠い葉っぱから一番遠い葉っぱを発見する
-            foreach (var str in leavesList)
-            {
-                // 真ん中の葉っぱからの距離の二乗を計算
-                distance = Math.Pow(Math.Pow(tmp1.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(tmp1.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
-                // 一番遠いものを一つ見つける
-                if (maxDistance < distance)
+                //見つけた一番遠い葉っぱから一番遠い葉っぱを発見する
+                foreach (var str in leavesList)
                 {
-                    maxDistance = distance;
-                    tmp2 = str;
+                    // 真ん中の葉っぱからの距離の二乗を計算
+                    distance = Math.Pow(Math.Pow(tmp1.gameObject.transform.position.x - str.gameObject.transform.position.x, 2) + Math.Pow(tmp1.gameObject.transform.position.y - str.gameObject.transform.position.y, 2), 0.5);
+                    // 一番遠いものを一つ見つける
+                    if (maxDistance < distance)
+                    {
+                        maxDistance = distance;
+                        tmp2 = str;
+                    }
                 }
+
+
+                //y座標の小さい方を基準点にする
+                if (tmp1.gameObject.transform.position.y > tmp2.gameObject.transform.position.y)
+                {
+                    GameObject tmp = tmp1;
+                    tmp1 = tmp2;
+                    tmp2 = tmp;
+                }
+
+                //丸太の設置位置(葉っぱ生成の初めの地点と終わりの地点を繋いだところ)設定
+                woodPoint = new Vector3((tmp1.gameObject.transform.position.x + tmp2.gameObject.transform.position.x) / 2, (tmp1.gameObject.transform.position.y + tmp2.gameObject.transform.position.y) / 2, 0);
+                //丸太を生成
+                GameObject scaffold = Instantiate(wood, woodPoint, Quaternion.Euler(0f, 0f, GetAngle(tmp1.gameObject.transform.position, tmp2.gameObject.transform.position)));
+                //生成した丸太のサイズ変更(デフォルトサイズ(positionでいうと): x方向5)
+                scaffold.transform.localScale = new Vector3(0.33f * Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5, 0.25f * (Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5) % 5, 0);
+
+                //生成した丸太を一括消去用配列に追加
+                woodList.Add(scaffold);
+                // 葉っぱリストの中身を削除
+                leavesList.Clear();
             }
-
-
-            //y座標の小さい方を基準点にする
-            if (tmp1.gameObject.transform.position.y > tmp2.gameObject.transform.position.y)
-            {
-                GameObject tmp = tmp1;
-                tmp1 = tmp2;
-                tmp2 = tmp;
-            }
-
-            //丸太の設置位置(葉っぱ生成の初めの地点と終わりの地点を繋いだところ)設定
-            woodPoint = new Vector3((tmp1.gameObject.transform.position.x + tmp2.gameObject.transform.position.x) / 2, (tmp1.gameObject.transform.position.y + tmp2.gameObject.transform.position.y) / 2, 0);
-            //丸太を生成
-            GameObject scaffold = Instantiate(wood, woodPoint, Quaternion.Euler(0f, 0f, GetAngle(tmp1.gameObject.transform.position, tmp2.gameObject.transform.position)));
-            //生成した丸太のサイズ変更(デフォルトサイズ(positionでいうと): x方向5)
-            scaffold.transform.localScale = new Vector3(0.33f * Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5, 0.25f * (Mathf.Abs(tmp1.gameObject.transform.position.x - tmp2.gameObject.transform.position.x) / 5) % 5, 0);
-
-            //生成した丸太を一括消去用配列に追加
-            woodList.Add(scaffold);
-            // 葉っぱリストの中身を削除
-            leavesList.Clear();
         }
     }
 
